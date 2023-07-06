@@ -2,7 +2,9 @@ package com.donggrii.springbootdeveloper.service;
 
 import com.donggrii.springbootdeveloper.domain.Article;
 import com.donggrii.springbootdeveloper.dto.ArticleAddRequestDto;
+import com.donggrii.springbootdeveloper.dto.ArticleUpdateRequestDto;
 import com.donggrii.springbootdeveloper.repository.ArticleRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,5 +36,16 @@ public class ArticleService {
     public void delete(long id) {
         // JPA 지원 메서드 deleteById() : ID를 받아 데이터 삭제
         articleRepository.deleteById(id);
+    }
+
+    @Transactional // 매칭한 메서드를 하나의 트랜잭션으로 묶는 역할을 하는 애너테이션
+    public Article update(long id, ArticleUpdateRequestDto dto) {
+        Article article = articleRepository.findById(id)
+                                           .orElseThrow(() -> new IllegalArgumentException(
+                                               "not found: " + id));
+
+        article.update(dto.getTitle(), dto.getContent());
+
+        return article;
     }
 }
