@@ -3,6 +3,7 @@ package com.donggrii.springbootdeveloper.service;
 import com.donggrii.springbootdeveloper.domain.Article;
 import com.donggrii.springbootdeveloper.dto.ArticleAddRequestDto;
 import com.donggrii.springbootdeveloper.repository.ArticleRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,9 @@ public class ArticleService {
         // JpaRepository에서 지원하는 저장 메서드 save()
         // ArticleAddRequestDto 클래스에 저장된 값들을 article 데이터베이스에 저장
         return articleRepository.save(dto.toEntity());
+    }
+
+    public List<Article> findAll() {
+        return articleRepository.findAll(); // JPA 지원 메서드 findAll() : 모든 데이터 조회
     }
 }
