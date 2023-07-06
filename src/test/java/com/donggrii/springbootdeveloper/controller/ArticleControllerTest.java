@@ -99,4 +99,27 @@ class ArticleControllerTest {
             .andExpect(jsonPath("$[0].content").value(content))
             .andExpect(jsonPath("$[0].title").value(title));
     }
+
+    @DisplayName("findArticle: 한 개의 블로그 글 조회 (READ-ONE)")
+    @Test
+    public void findArticle() throws Exception {
+        // [given] : 블로그 글 저장
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+
+        Article savedArticle = articleRepository.save(Article.builder()
+                                                             .title(title)
+                                                             .content(content)
+                                                             .build());
+
+        // [when] : 저장한 블로그 글의 id 값으로 API 호출
+        final ResultActions result = mockMvc.perform(get(url, savedArticle.getId()));
+
+        // [then] : 응답 코드 200 OK 확인, 반환받은 content와 title이 저장된 값과 같은지 확인
+        result
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content").value(content))
+            .andExpect(jsonPath("$.title").value(title));
+    }
 }
