@@ -57,10 +57,11 @@ class ArticleControllerTest {
         final String requestBody = objectMapper.writeValueAsString(userRequest);
 
         // [when] : given절에서 만든 객체를 요청 본문으로 블로그 글 추가 API에 보내기 (요청 타입 : JSON)
-        ResultActions result = mockMvc.perform(post(url) // HTTP 메서드, URL
-                                                         .contentType(
-                                                             MediaType.APPLICATION_JSON_VALUE) // 요청 타입
-                                                         .content(requestBody)); // 요청 본문
+        // perform((HTTP 메서드(URL)).(요청 타입).(요청 본문))
+        ResultActions result = mockMvc.perform(post(url)
+            .contentType(
+                MediaType.APPLICATION_JSON_VALUE)
+            .content(requestBody));
 
         // [then]
         // 응답 코드가 201 Created인지 확인, Blog를 전체 조회해 크기가 1인지 확인, 실제 저장된 데이터와 요청값 비교
