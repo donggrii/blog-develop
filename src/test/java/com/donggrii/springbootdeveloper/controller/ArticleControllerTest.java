@@ -1,6 +1,7 @@
 package com.donggrii.springbootdeveloper.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -121,5 +122,28 @@ class ArticleControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content").value(content))
             .andExpect(jsonPath("$.title").value(title));
+    }
+
+    @DisplayName("deleteArticle: 한 개의 블로그 글 삭제 (DELETE)")
+    @Test
+    public void deleteArticle() throws Exception {
+        // [given] : 블로그 글 저장
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+
+        Article savedArticle = articleRepository.save(Article.builder()
+                                                             .title(title)
+                                                             .content(content)
+                                                             .build());
+
+        // [when] : 저장한 블로그 글의 id 값으로 삭제 API 호출
+        mockMvc.perform(delete(url, savedArticle.getId()))
+               .andExpect(status().isOk());
+
+        // [then] : 응답 코드 200 OK 확인, 블로그 글 리스트를 전체 조회해 조회한 배열 크기가 0인지 확인
+        List<Article> articles = articleRepository.findAll();
+
+        assertThat(articles).isEmpty();
     }
 }
