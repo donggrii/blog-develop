@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,5 +52,15 @@ public class ArticleController {
 
         return ResponseEntity.ok()
                              .body(new ArticleResponseDto(article)); // body에 담아 웹 브라우저로 전송
+    }
+
+    @DeleteMapping("/api/articles/{id}")
+    public ResponseEntity<Void> deleteArticle(@PathVariable long id) {
+        // @PathVariable : URL에서 값을 가져오는 애너테이션
+        //                 URL에서 {id}에 해당하는 값이 argument로 들어옴
+        articleService.delete(id);
+
+        return ResponseEntity.ok()
+                             .build();
     }
 }

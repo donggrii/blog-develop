@@ -30,4 +30,9 @@ public class ArticleService {
                                 .orElseThrow(
                                     () -> new IllegalArgumentException("not found: " + id));
     }
+
+    public void delete(long id) {
+        // JPA 지원 메서드 deleteById() : ID를 받아 데이터 삭제
+        articleRepository.deleteById(id);
+    }
 }
