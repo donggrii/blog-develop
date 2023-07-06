@@ -3,6 +3,7 @@ package com.donggrii.springbootdeveloper.controller;
 import com.donggrii.springbootdeveloper.domain.Article;
 import com.donggrii.springbootdeveloper.dto.ArticleAddRequestDto;
 import com.donggrii.springbootdeveloper.dto.ArticleResponseDto;
+import com.donggrii.springbootdeveloper.dto.ArticleUpdateRequestDto;
 import com.donggrii.springbootdeveloper.service.ArticleService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,5 +64,16 @@ public class ArticleController {
 
         return ResponseEntity.ok()
                              .build();
+    }
+
+    @PutMapping("/api/articles/{id}")
+    public ResponseEntity<Article> updateArticle(@PathVariable long id,
+        @RequestBody ArticleUpdateRequestDto dto) {
+        // PUT 요청이 오면 Request Body 정보가 dto로 넘어옴
+        // 이 dto를 다시 service 클래스의 update() 메서드에 id와 함께 넘겨주는 것
+        Article updatedArticle = articleService.update(id, dto);
+
+        return ResponseEntity.ok()
+                             .body(updatedArticle); // 응답 값은 body에 담아 전송
     }
 }
