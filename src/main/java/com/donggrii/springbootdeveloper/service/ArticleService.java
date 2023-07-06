@@ -23,4 +23,11 @@ public class ArticleService {
     public List<Article> findAll() {
         return articleRepository.findAll(); // JPA 지원 메서드 findAll() : 모든 데이터 조회
     }
+
+    public Article findById(long id) {
+        // JPA 지원 메서드 findById() : ID를 받아 Entity 조회하고, 없으면 IllegalArgumentException 발생
+        return articleRepository.findById(id)
+                                .orElseThrow(
+                                    () -> new IllegalArgumentException("not found: " + id));
+    }
 }
