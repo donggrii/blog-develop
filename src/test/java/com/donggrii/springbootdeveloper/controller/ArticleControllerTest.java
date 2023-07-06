@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.donggrii.springbootdeveloper.domain.Article;
 import com.donggrii.springbootdeveloper.dto.ArticleAddRequestDto;
+import com.donggrii.springbootdeveloper.dto.ArticleUpdateRequestDto;
 import com.donggrii.springbootdeveloper.repository.ArticleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -47,7 +49,7 @@ class ArticleControllerTest {
         articleRepository.deleteAll();
     }
 
-    @DisplayName("addArticle: 블로그 글 추가 (CREATE)")
+    @DisplayName("addArticle: 한 개의 블로그 글 추가 (CREATE)")
     @Test
     public void addArticle() throws Exception {
         // [given] : 블로그 글 추가에 필요한 요청 객체 만들기
@@ -145,5 +147,38 @@ class ArticleControllerTest {
         List<Article> articles = articleRepository.findAll();
 
         assertThat(articles).isEmpty();
+    }
+
+    @DisplayName("updateArticle: 한 개의 블로그 글 수정 (UPDATE)")
+    @Test
+    public void updateArticle() throws Exception {
+        // [given] : 블로그 글 저장, 블로그 글 수정에 필요한 요청 객체 생성
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+
+        Article savedArticle = articleRepository.save(Article.builder()
+                                                             .title(title)
+                                                             .content(content)
+                                                             .build());
+
+        final String newTitle = "new-title";
+        final String newContent = "new-content";
+
+        ArticleUpdateRequestDto dto = new ArticleUpdateRequestDto(newTitle, newContent);
+
+        // [when] : given절에서 만든 객체를 요청 본문으로 UPDATE API로 수정 요청을 보냄 (요청 타입 : JSON)
+        // perform((HTTP 메서드(URL)).(요청 타입).(요청 본문))
+        ResultActions result = mockMvc.perform(put(url, savedArticle.getId())
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(objectMapper.writeValueAsString(dto)));
+
+        // [then] : 응답 코드 200 OK 확인, 블로그 글 id로 조회한 후 값 수정되었는지 확인
+        result.andExpect(status().isOk());
+
+        Article article = articleRepository.findById(savedArticle.getId()).get();
+
+        assertThat(article.getTitle()).isEqualTo(newTitle);
+        assertThat(article.getContent()).isEqualTo(newContent);
     }
 }
